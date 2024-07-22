@@ -19,6 +19,7 @@ class SignUpService():
             return True
         raise ValueError("Your Password must contains of 8 characters at least")
 
+
 class LogInService():
     """"""
     @staticmethod
