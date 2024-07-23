@@ -19,7 +19,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField(null=False, upload_to='product_images/')
+    image = models.ImageField(null=True, blank=True, upload_to='product_images/')
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
@@ -28,9 +28,11 @@ class Product(models.Model):
 
 class Coupon(models.Model):
     """"""
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='copoun')
-    code = models.CharField(max_length='25')
-    models.PositiveSmallIntegerField(help_text="Discount percentage (0-100).")
+    code = models.CharField(max_length=25)
+    discount = models.PositiveSmallIntegerField(help_text="Discount percentage (0-100).",
+                                                default=0)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE,
+                                  related_name='coupon')
 
     def __str__(self) -> str:
-        return f'{self.code} - {self.product}'
+        return self.code

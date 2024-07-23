@@ -4,7 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializerSignUp, UserSerializerInfo
+from .serializers import UserSerializerSignUp, UserSerializerInfo, UserSerializerLogIn
 from .services import SignUpService, LogInService
 from .models import CustomUser
 
@@ -35,6 +35,7 @@ class SignUpApiView(GenericAPIView):
 class LogInApiView(GenericAPIView):
     """"""
     permission_classes = (AllowAny,)
+    serializer_class = UserSerializerLogIn
 
     def post(self, request):
         """"""
