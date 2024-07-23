@@ -10,6 +10,14 @@ class UserSerializerSignUp(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
+class UserSerializerLogIn(serializers.ModelSerializer):
+    """Sign-up serializer class"""
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+
 class UserSerializerInfo(serializers.ModelSerializer):
     """Represent inforamation about system users"""
     class Meta:
