@@ -3,11 +3,13 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import Cart, CartItem, Order, OrderItem
+from products.models import Product
 from .serializers import (CartItemSerializer,
                           CartSerializer,
                           OrderItemSerializer,
                           OrderSerializer)
 from django.shortcuts import get_object_or_404
+from .services import OrderServices
 
 
 # order >> create, retrieve, list,
@@ -20,13 +22,14 @@ class OrderCreateApiView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        cart = get_object_or_404(Cart, user=request.user)
-        order = Order.objects.create(user=request.user, 
-                                     total_price=cart.get_total_price())
+        user = request.user
+        cart = get_object_or_404(Cart, user=user)
+
+        order = Order.objects.create(user=user, total_price=cart.get_total_price())
 
         for item in cart.items.all():
-            OrderItem.objects.create(order=order, product=item.product,
-                                     quantity=item.quantity)
+            product = item.product
+            OrderItem.objects.create(order=order, product=product, quantity=item.quantity)
         cart.items.all().delete()
 
         serializer = self.get_serializer(order)
@@ -79,13 +82,24 @@ class CartItemAddApiView(generics.CreateAPIView):
         user = request.user
         cart, created = Cart.objects.get_or_create(user=user)
         product_id = request.data.get('product_id')
-        quantity = int(request.data.get('quantity', 1))  # Ensure quantity is an integer
+        quantity = int(request.data.get('quantity', 1))
         
+        # check product quantity in stock
+        print(f'first quantity = {quantity}')
+        response = OrderServices.check_product_quantity(quantity, product_id)
+        if response:
+            return response
+
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product_id=product_id)
         if created:
             cart_item.quantity = quantity
         else:
             cart_item.quantity += quantity
+            # check the updated quantity in stock
+            print(f'updated quantity = {cart_item.quantity}')
+            response = OrderServices.check_product_quantity(cart_item.quantity, product_id)
+            if response:
+                return response
         cart_item.save()
         
         serializer = self.get_serializer(cart_item)
