@@ -12,11 +12,14 @@ class Cart(models.Model):
     def __str__(self) -> str:
         return f'{self.user.username} Cart'
 
+    def get_total_price(self):
+        return sum(item.product.price * item.quantity for item in self.items.all())
+
 
 class CartItem(models.Model):
     """"""
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self) -> str:
@@ -25,7 +28,7 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     """"""
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='Pending')
     created = models.DateTimeField(auto_now_add=True)
