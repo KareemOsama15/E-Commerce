@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import CustomUser
-from products.models import Product
+from products.models import Product, Coupon
 
 
 class Cart(models.Model):
@@ -18,7 +18,19 @@ class Cart(models.Model):
         """
         Method return total price for all products
         """
-        return sum(item.product.price * item.quantity for item in self.items.all())
+        totalPrice = 0
+        products = self.items.all()
+
+        for productItem in products:
+            productPrice = productItem.product.price
+
+            coupon = Coupon.objects.filter(product=productItem.product).first()
+            if coupon:
+                discount = (productPrice * coupon.discount) / 100
+                productPrice -= discount
+
+            totalPrice += productPrice * productItem.quantity
+        return totalPrice
 
 
 class CartItem(models.Model):
@@ -30,7 +42,7 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self) -> str:
-        return f'{self.Product.name} - {self.quantity}'
+        return f'{self.product.name} - {self.quantity}'
 
 
 class Order(models.Model):
