@@ -23,12 +23,12 @@ class OrderCreateApiView(generics.CreateAPIView):
         cart = get_object_or_404(Cart, user=request.user)
         order = Order.objects.create(user=request.user, 
                                      total_price=cart.get_total_price())
-        
+
         for item in cart.items.all():
             OrderItem.objects.create(order=order, product=item.product,
                                      quantity=item.quantity)
         cart.items.all().delete()
-        
+
         serializer = self.get_serializer(order)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

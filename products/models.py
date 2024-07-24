@@ -3,7 +3,9 @@ from users.models import CustomUser
 
 
 class Category(models.Model):
-    """"""
+    """
+    Category Model class
+    """
     name = models.CharField(max_length=200, null=False, blank=False, unique=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -12,7 +14,9 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """"""
+    """
+    Product Model class
+    """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     categories = models.ManyToManyField(Category, related_name='products')
     name = models.CharField(max_length=250, null=False, blank=False, unique=True)
@@ -27,7 +31,9 @@ class Product(models.Model):
 
 
 class Coupon(models.Model):
-    """"""
+    """
+    Coupon model class
+    """
     code = models.CharField(max_length=25)
     discount = models.PositiveSmallIntegerField(help_text="Discount percentage (0-100).",
                                                 default=0)

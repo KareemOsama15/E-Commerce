@@ -11,7 +11,7 @@ class UserSerializerSignUp(serializers.ModelSerializer):
 
 
 class UserSerializerLogIn(serializers.ModelSerializer):
-    """Sign-up serializer class"""
+    """Log-in serializer class"""
     class Meta:
         model = CustomUser
         fields = ['email', 'password']
@@ -22,7 +22,8 @@ class UserSerializerInfo(serializers.ModelSerializer):
     """Represent inforamation about system users"""
     class Meta:
         model = CustomUser
-        fields = ['email',
+        fields = ['id',
+                  'email',
                   'username',
                   'email',
                   'date_joined',

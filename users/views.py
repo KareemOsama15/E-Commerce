@@ -10,7 +10,9 @@ from .models import CustomUser
 
 
 class SignUpApiView(GenericAPIView):
-    """"""
+    """
+    Api view to sign-up new user
+    """
     permission_classes = (AllowAny,)
     serializer_class = UserSerializerSignUp
 
@@ -33,7 +35,9 @@ class SignUpApiView(GenericAPIView):
 
 
 class LogInApiView(GenericAPIView):
-    """"""
+    """
+    Api view to make register users log-in 
+    """
     permission_classes = (AllowAny,)
     serializer_class = UserSerializerLogIn
 
@@ -54,7 +58,9 @@ class LogInApiView(GenericAPIView):
 
 
 class LogOutApiView(GenericAPIView):
-    """"""
+    """
+    Api view to make users logout
+    """
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -69,7 +75,9 @@ class LogOutApiView(GenericAPIView):
 
 
 class UserInfoApiView(ListAPIView):
-    """"""
+    """
+    Api view to list all system users
+    """
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializerInfo
     permission_classes = (IsAdminUser,)

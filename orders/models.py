@@ -4,7 +4,9 @@ from products.models import Product
 
 
 class Cart(models.Model):
-    """"""
+    """
+    Cart model class
+    """
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -13,11 +15,16 @@ class Cart(models.Model):
         return f'{self.user.username} Cart'
 
     def get_total_price(self):
+        """
+        Method return total price for all products
+        """
         return sum(item.product.price * item.quantity for item in self.items.all())
 
 
 class CartItem(models.Model):
-    """"""
+    """
+    CartItem model class
+    """
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
@@ -27,7 +34,9 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    """"""
+    """
+    Order model class
+    """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='Pending')
@@ -38,7 +47,9 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    """"""
+    """
+    OrderItem model class
+    """
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
