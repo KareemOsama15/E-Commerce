@@ -130,7 +130,7 @@ The E-Commerce Backend System is designed to provide a robust and scalable backe
 ## API Documentation
 
 The API documentation is available at:
-[http://localhost:8000/api_schema/](http://localhost:8000/api_schema/)
+[https://documenter.getpostman.com/view/33415932/2sA3kXFMGK](https://documenter.getpostman.com/view/33415932/2sA3kXFMGK)
 
 ## Tests
 
