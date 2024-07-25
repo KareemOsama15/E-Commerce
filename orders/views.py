@@ -54,8 +54,10 @@ class OrderListApiView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+    def list(self, request, *args, **kwargs):
+        orders = OrderServices.get_cached_orders_list(request.user)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CartRetrieveApiView(generics.RetrieveAPIView):

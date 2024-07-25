@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (ProductCreateApiView,
                     ProductUpdateDestroyApiView,
-                    ProductListRetrieveApiView,
+                    ProductRetrieveApiView,
+                    ProductListApiView,
                     CouponCreateApiView,
                     CouponUpdateDeleteApiView,
                     CategoryCreateApiView,
@@ -17,9 +18,9 @@ urlpatterns = [
           name='update-product'),
      path('product/<int:pk>/delete/', ProductUpdateDestroyApiView.as_view(),
           name='delete-product'),
-     path('product/<int:pk>/', ProductListRetrieveApiView.as_view(),
+     path('product/<int:pk>/', ProductRetrieveApiView.as_view(),
           name='retrieve-product'),
-     path('products/', ProductListRetrieveApiView.as_view(),
+     path('products/', ProductListApiView.as_view(),
          name='list-products'),
 
      # Category urls
