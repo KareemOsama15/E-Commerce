@@ -1,5 +1,6 @@
 from .models import Product, Coupon, Category
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
 class ProductAppServices():
     """
@@ -43,3 +44,25 @@ class ProductAppServices():
         category = get_object_or_404(Category, pk=category_id)
         products = category.products.all()
         return products
+
+    @staticmethod
+    def get_cached_products_list():
+        """
+        Method returns cached products list
+        """
+        products = cache.get('products')
+        if not products:
+            products = Product.objects.all()
+            cache.set('products', products, timeout=60*15)
+        return products
+
+    @staticmethod
+    def get_cached_product_detail(id):
+        """
+        Method return cached product detail
+        """
+        product = cache.get(f'product_{id}')
+        if not product:
+            product = Product.objects.get(pk=id)
+            cache.set(f'product_{id}', product, timeout=60*15)
+        return product

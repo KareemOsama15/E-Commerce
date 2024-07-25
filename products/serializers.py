@@ -6,7 +6,6 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Product serializer class
     """
-    id = serializers.SerializerMethodField(read_only=True)
     categories = serializers.SerializerMethodField()
     discount = serializers.SerializerMethodField(read_only=True)
 
@@ -22,10 +21,6 @@ class ProductSerializer(serializers.ModelSerializer):
                   'discount'
                   ]
 
-    def get_id(self, obj):
-        """ Return object id """
-        return obj.id
-
     def get_categories(self, obj):
         """ Return categories related to that object """
         return [category.name for category in obj.categories.all()]
@@ -39,7 +34,6 @@ class CouponSerializer(serializers.ModelSerializer):
     """
     Coupon serializer class
     """
-    id = serializers.SerializerMethodField(read_only=True)
     product_id = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -52,9 +46,6 @@ class CouponSerializer(serializers.ModelSerializer):
         if not (0 <= discount <= 100):
             raise serializers.ValidationError("Discount must be between 0 and 100.")
         return attrs
-
-    def get_id(self, obj):
-        return obj.id
 
 
 class CategorySerializer(serializers.ModelSerializer):

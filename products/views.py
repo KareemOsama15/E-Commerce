@@ -9,6 +9,7 @@ from rest_framework.generics import (ListAPIView,
 from .serializers import CategorySerializer, ProductSerializer, CouponSerializer
 from .services import ProductAppServices
 from .models import Product, Coupon, Category
+from django.core.cache import cache
 
 
 class ProductCreateApiView(CreateAPIView):
@@ -34,20 +35,37 @@ class ProductUpdateDestroyApiView(UpdateAPIView, DestroyAPIView):
     permission_classes = (IsAdminUser,)
 
 
-class ProductListRetrieveApiView(RetrieveAPIView, ListAPIView):
+class ProductRetrieveApiView(RetrieveAPIView):
     """
-    Api view to list all products or retrieve specific product
+    Api view to retrieve specific product details
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        if pk:
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
+    def retrieve(self, request, *args, **kwargs):
+        product_id = kwargs.get('pk')
+        product = ProductAppServices.get_cached_product_detail(product_id)
+        if not product:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProductListApiView(ListAPIView):
+    """
+    Api view to list all products
+    """
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request, *args, **kwargs):
+        products = ProductAppServices.get_cached_products_list()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CouponCreateApiView(CreateAPIView):
