@@ -14,6 +14,7 @@ class Cart(models.Model):
     def __str__(self) -> str:
         return f'{self.user.username} Cart'
 
+    @property
     def get_total_price(self):
         """
         Method return total price for all products
@@ -55,7 +56,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'{self.user.name} - {self.status}'
+        return f'{self.user.username} - {self.status}'
 
 
 class OrderItem(models.Model):

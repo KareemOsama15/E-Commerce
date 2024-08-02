@@ -168,6 +168,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contact
 
 - Karim - [karim.osama.saleh@gmail.com](mailto:karim.osama.saleh@gmail.com)
-- Project Repository: [https://github.com/your-username/ecommerce-backend](https://github.com/your-username/ecommerce-backend)
+- Project Repository: [https://github.com/KareemOsama15/E-Commerce](https://github.com/KareemOsama15/E-Commerce)
 
 ---

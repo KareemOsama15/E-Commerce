@@ -22,13 +22,13 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     # users app
-    path('api/auth/', include('users.urls')),
+    path('api/v1/auth/', include('users.urls')),
     # products app
-    path('api/', include('products.urls')),
+    path('api/v1/', include('products.urls')),
     # orders app
-    path('api/user/', include('orders.urls')),
+    path('api/v1/user/', include('orders.urls')),
     # payment app
-    path('api/payment/', include('payment.urls')), 
+    path('api/v1/payment/', include('payment.urls')), 
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
