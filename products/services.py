@@ -1,4 +1,4 @@
-from .models import Product, Coupon, Category
+from .models import Product, Category
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 
@@ -19,13 +19,20 @@ class ProductAppServices():
         return category_list
 
     @staticmethod
-    def create_product(serializer, categories, user):
+    def create_product_categories(product, data):
         """
-        Method creates a new product object
+        Method creates a new product object categories
         """
-        product = serializer.save(user=user)
+        categories = ProductAppServices.get_categories_list(data)
         product.categories.set(categories)
-        return product
+
+    @staticmethod
+    def update_product_categories(product, data):
+        """
+        Method updates product categories
+        """
+        categories = ProductAppServices.get_categories_list(data)
+        product.categories.set(categories)
 
     @staticmethod
     def get_coupon_product(data):
@@ -63,6 +70,6 @@ class ProductAppServices():
         """
         product = cache.get(f'product_{id}')
         if not product:
-            product = Product.objects.get(pk=id)
+            product = get_object_or_404(Product, pk=id)
             cache.set(f'product_{id}', product, timeout=60*15)
         return product

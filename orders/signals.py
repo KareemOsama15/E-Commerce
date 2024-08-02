@@ -7,3 +7,4 @@ from .models import Order
 @receiver(post_delete, sender=Order)
 def invalidate_orders_cache(sender, instance, **kwargs):
     cache.delete('orders')
+    cache.delete(f'order_{instance.id}')

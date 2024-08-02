@@ -9,7 +9,6 @@ from rest_framework.generics import (ListAPIView,
 from .serializers import CategorySerializer, ProductSerializer, CouponSerializer
 from .services import ProductAppServices
 from .models import Product, Coupon, Category
-from django.core.cache import cache
 
 
 class ProductCreateApiView(CreateAPIView):
@@ -20,9 +19,9 @@ class ProductCreateApiView(CreateAPIView):
     permission_classes = (IsAdminUser,)
 
     def perform_create(self, serializer):
-        categories = ProductAppServices.get_categories_list(self.request.data)
-        ProductAppServices.create_product(serializer, categories, self.request.user)
-        
+        product = serializer.save(user=self.request.user)
+        ProductAppServices.create_product_categories(product,
+                                          self.request.data)
 
 
 class ProductUpdateDestroyApiView(UpdateAPIView, DestroyAPIView):
@@ -34,23 +33,22 @@ class ProductUpdateDestroyApiView(UpdateAPIView, DestroyAPIView):
     lookup_field = 'pk'
     permission_classes = (IsAdminUser,)
 
+    def perform_update(self, serializer):
+        product = serializer.save()
+        ProductAppServices.update_product_categories(product, self.request.data)
+
 
 class ProductRetrieveApiView(RetrieveAPIView):
     """
     Api view to retrieve specific product details
     """
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    lookup_field = 'pk'
     permission_classes = (IsAuthenticated,)
 
-    def retrieve(self, request, *args, **kwargs):
-        product_id = kwargs.get('pk')
+    def get_object(self):
+        product_id = self.kwargs.get('pk')
         product = ProductAppServices.get_cached_product_detail(product_id)
-        if not product:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return product
 
 
 class ProductListApiView(ListAPIView):
@@ -125,5 +123,5 @@ class CategorySearchApiView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         products = ProductAppServices.search_by_category(kwargs.get('pk'))
-        product_data = self.serializer_class(products, many=True).data       
+        product_data = self.serializer_class(products, many=True).data
         return Response({'products': product_data}, status=status.HTTP_200_OK)
